@@ -8,6 +8,11 @@ import java.util.UUID;
 
 public class CrimeLab {
     private static CrimeLab crimeLab;
+
+    public List<Crime> getCrimes() {
+        return crimes;
+    }
+
     private List<Crime> crimes;
 
     public static CrimeLab getCrimeLab(Context context) {
