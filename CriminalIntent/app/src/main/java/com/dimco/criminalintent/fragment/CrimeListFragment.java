@@ -1,5 +1,6 @@
 package com.dimco.criminalintent.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,18 +8,22 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dimco.criminalintent.R;
+import com.dimco.criminalintent.activity.CrimeActivity;
 import com.dimco.criminalintent.entity.Crime;
 import com.dimco.criminalintent.entity.CrimeLab;
 
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
+import static com.dimco.criminalintent.util.Constants.EXTRA_CRIME_ID;
 
 public class CrimeListFragment extends Fragment {
     private RecyclerView crimeRecyclerView;
@@ -28,14 +33,14 @@ public class CrimeListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view);
-        crimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        crimeRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         updateUi();
         return view;
     }
 
     private void updateUi() {
-        CrimeLab crimeLab = CrimeLab.getCrimeLab(getActivity());
+        CrimeLab crimeLab = CrimeLab.getCrimeLab(getContext());
         List<Crime> crimes = crimeLab.getCrimes();
         CrimeAdapter adapter = new CrimeAdapter(crimes);
         crimeRecyclerView.setAdapter(adapter);
@@ -67,9 +72,9 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(),
-                    crime.getTitle() + " clicked!",
-                    Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), CrimeActivity.class);
+            intent.putExtra(EXTRA_CRIME_ID, crime.getId());
+            startActivity(intent);
         }
     }
 
@@ -83,7 +88,7 @@ public class CrimeListFragment extends Fragment {
         @NonNull
         @Override
         public CrimeHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            LayoutInflater layoutInflater = LayoutInflater.from(getContext());
             View view = layoutInflater.inflate(R.layout.list_item_crime, viewGroup, false);
 
             return new CrimeHolder(view);

@@ -17,14 +17,22 @@ import android.widget.EditText;
 
 import com.dimco.criminalintent.R;
 import com.dimco.criminalintent.entity.Crime;
+import com.dimco.criminalintent.entity.CrimeLab;
+
+import java.util.UUID;
+
+import static com.dimco.criminalintent.util.Constants.EXTRA_CRIME_ID;
 
 public class CrimeFragment extends Fragment {
     private Crime crime;
+    private static final String ARG_CRIME_ID = "crime_id";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        crime = new Crime();
+
+        UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
+        crime = CrimeLab.getCrimeLab(getContext()).getCrime(crimeId);
     }
 
     @Nullable
@@ -33,6 +41,7 @@ public class CrimeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
 
         EditText titleField = v.findViewById(R.id.crime_title);
+        titleField.setText(crime.getTitle());
         titleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -55,13 +64,19 @@ public class CrimeFragment extends Fragment {
         dateButton.setEnabled(false);
 
         CheckBox solvedCheckBox = v.findViewById(R.id.crime_solved);
-        solvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                crime.setSolved(isChecked);
-            }
-        });
+        solvedCheckBox.setChecked(crime.isSolved());
+        solvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                crime.setSolved(isChecked));
 
         return v;
+    }
+
+    public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_CRIME_ID, crimeId);
+
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(bundle);
+        return fragment;
     }
 }

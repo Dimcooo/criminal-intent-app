@@ -16,7 +16,8 @@ public class CrimeLab {
     private List<Crime> crimes;
 
     public static CrimeLab getCrimeLab(Context context) {
-        return (crimeLab == null) ? new CrimeLab(context) : crimeLab;
+        crimeLab = (crimeLab == null) ? new CrimeLab(context) : crimeLab;
+        return crimeLab;
     }
 
     private CrimeLab(Context context) {
